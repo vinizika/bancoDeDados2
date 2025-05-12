@@ -2,6 +2,7 @@ import random
 import string
 from datetime import datetime, timedelta
 from supabase import create_client, Client # type: ignore
+from collections import Counter
 
 url: str = "https://zohjlovkaevbispuxsml.supabase.co"
 key: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvaGpsb3ZrYWV2YmlzcHV4c21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYzOTU3NDksImV4cCI6MjA2MTk3MTc0OX0.4TMeR8lP4iYUnGko1zaXlCZyVnf6JLuazJy6EiXMGUg"
@@ -9,7 +10,7 @@ supabase: Client = create_client(url, key)
 
 # ── LIMPA A TABELA EVENTO_ARTISTA (não depende de mais nada) ─────────────────
 while True:
-    ea = supabase.table("evento_artista").select("id_evento").execute().data
+    ea = supabase.table("evento_artista").select("id_evento,id_artista").execute().data
     if not ea:
         break
     for row in ea:
@@ -428,3 +429,93 @@ for id_evento in evento_ids:
 
     for id_artista in artistas_escolhidos:
         print(f"[INSERE - EVENTO_ARTISTA]: evento {id_evento}, artista {id_artista} inserido")
+
+# ===============================================================
+# INTEGRITY CHECK - EVENT TICKETS DATABASE
+# ===============================================================
+
+def fetch_ids(table, id_field):
+    return {row[id_field] for row in supabase.table(table).select(id_field).execute().data}
+
+ids_local     = fetch_ids("local",  "id_local")
+ids_pessoa    = fetch_ids("pessoa", "id_pessoa")
+ids_categoria = fetch_ids("categoria", "id_categoria")
+ids_evento    = fetch_ids("evento", "id_evento")
+ids_artista   = fetch_ids("artista", "id_artista")
+ids_ingresso  = fetch_ids("ingresso", "id_ingresso")
+ids_compra    = fetch_ids("compra", "id_compra")
+
+issues = []
+
+# 1) Non-empty tables
+for name, s in [("local", ids_local), ("pessoa", ids_pessoa), ("categoria", ids_categoria),
+                ("evento", ids_evento), ("artista", ids_artista),
+                ("ingresso", ids_ingresso), ("compra", ids_compra)]:
+    if not s:
+        issues.append(f"Table {name} is empty")
+
+# 2) Event rules: 1-3 artists, valid FKs
+ea_rows = supabase.table("evento_artista").select("id_evento", "id_artista").execute().data
+artists_by_event = Counter()
+for ea in ea_rows:
+    if ea["id_artista"] not in ids_artista:
+        issues.append(f"Event {ea['id_evento']} references invalid artist {ea['id_artista']}")
+    artists_by_event[ea["id_evento"]] += 1
+
+for ev in supabase.table("evento").select("*").execute().data:
+    n = artists_by_event.get(ev["id_evento"], 0)
+    if n < 1 or n > 3:
+        issues.append(f"Event {ev['id_evento']} has {n} artists (expected 1-3)")
+    if ev["id_local"] not in ids_local:
+        issues.append(f"Event {ev['id_evento']} has invalid id_local {ev['id_local']}")
+    if ev["id_organizador"] not in ids_pessoa:
+        issues.append(f"Event {ev['id_evento']} has invalid id_organizador {ev['id_organizador']}")
+
+# 3) Ticket rules: valid FKs, quantity 1-3, linked to a purchase
+ci_rows = supabase.table("compra_ingresso")\
+         .select("id_compra", "id_ingresso", "quantidade").execute().data
+tickets_purchased = Counter()
+for ci in ci_rows:
+    if ci["id_ingresso"] not in ids_ingresso:
+        issues.append(f"Purchase {ci['id_compra']} references invalid ticket {ci['id_ingresso']}")
+    if ci["id_compra"] not in ids_compra:
+        issues.append(f"compra_ingresso row has invalid id_compra {ci['id_compra']}")
+    if ci["quantidade"] < 1 or ci["quantidade"] > 3:
+        issues.append(f"Purchase {ci['id_compra']} ticket {ci['id_ingresso']} qty {ci['quantidade']} (expected 1-3)")
+    tickets_purchased[ci["id_ingresso"]] += ci["quantidade"]
+
+for ing in supabase.table("ingresso").select("id_ingresso", "id_evento", "id_categoria").execute().data:
+    if ing["id_evento"] not in ids_evento:
+        issues.append(f"Ticket {ing['id_ingresso']} has invalid id_evento {ing['id_evento']}")
+    if ing["id_categoria"] not in ids_categoria:
+        issues.append(f"Ticket {ing['id_ingresso']} has invalid id_categoria {ing['id_categoria']}")
+    if tickets_purchased.get(ing["id_ingresso"], 0) == 0:
+        issues.append(f"Ticket {ing['id_ingresso']} not linked to any purchase")
+
+# 4) Purchase rules: at least 1 ticket, valid person
+purchases_with_items = {ci["id_compra"] for ci in ci_rows}
+for comp in supabase.table("compra").select("id_compra", "id_pessoa").execute().data:
+    if comp["id_compra"] not in purchases_with_items:
+        issues.append(f"Purchase {comp['id_compra']} has no tickets")
+    if comp["id_pessoa"] not in ids_pessoa:
+        issues.append(f"Purchase {comp['id_compra']} has invalid id_pessoa {comp['id_pessoa']}")
+
+# 5) Unique CPF and email
+people = supabase.table("pessoa").select("cpf", "email", "id_pessoa").execute().data
+cpf_count   = Counter(p["cpf"]   for p in people)
+email_count = Counter(p["email"] for p in people)
+for p in people:
+    if cpf_count[p["cpf"]] > 1:
+        issues.append(f"Duplicate CPF {p['cpf']} (person {p['id_pessoa']})")
+    if email_count[p["email"]] > 1:
+        issues.append(f"Duplicate email {p['email']} (person {p['id_pessoa']})")
+
+# Report
+print("\n" + "="*50)
+if issues:
+    print("INTEGRITY CHECK FAILED")
+    for msg in issues:
+        print(" -", msg)
+else:
+    print("INTEGRITY CHECK PASSED: all rules satisfied")
+print("="*50 + "\n")
