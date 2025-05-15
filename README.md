@@ -4,9 +4,15 @@ Manuella Filipe Peres 22.224.029-3 <br>
 Vinicius de Castro Duarte 22.224.020-2
 
 # Descrição do projeto
-Para realizar o projeto, usamos a plataforma de banco de dados em nuvem Supabase, assim como apresentado em aula. Para criar o código para randomizar a entrada de dados no database, utilizamos Python. <br>
-O projeto consiste em um sistema simulando o banco de dados de um site de compra de ingressos, nele há informações como tipo do show, data e horário, quantos ingressos serão disponibilizados para cada show, quais artistas irão se apresentar em qual local, entre outras informações essenciais para o funcionamento da venda de ingressos de eventos.<br>
-Todas essas informações foram desenvolvidas utilizando querys em SQL que conectadas à um código em Python geram informações fictícias tanto do show quanto dos seus compradores como nome e sobrenome, artistas, gêneros dos shows, local, descrição e nome do evento, fazendo com que todos os dados se interliguem, e assim o sistema de compra de ingressos funcione como esperado.<br> Realizamos os nossos modelos relacionais sempre tendo em vista o produto final. Ou seja, tudo foi pensado, desde o início, para que todas as informações fossem de fácil acesso, nunca ficando inacessíveis ou a muitos 'joins' de distância. Também seguimos as regras da 3FN, para estar de acordo com a metodologia da disciplina.<br>
+Para o desenvolvimento do projeto, utilizamos a plataforma de banco de dados em nuvem Supabase, conforme demonstrado durante as aulas.<br>
+A geração de dados aleatórios para inserção no banco foi feita com o auxílio da linguagem Python.<br><br>
+O projeto simula um sistema de banco de dados para um site de venda de ingressos, contendo informações como o tipo de evento, data e horário, a quantidade de ingressos disponíveis, os artistas que irão se apresentar, os locais dos shows, entre outros dados essenciais para o processo de comercialização de ingressos.<br><br>
+Todos esses dados foram criados por meio de consultas SQL integradas a um script em Python, o qual gerou informações fictícias tanto sobre os eventos quanto sobre os compradores.<br>
+Entre os dados gerados estão: nome e sobrenome dos usuários, artistas, gêneros musicais, localizações, descrições e títulos dos eventos.<br>
+Dessa forma, todas as tabelas se relacionam entre si, possibilitando que o sistema funcione de maneira completa e coerente.<br><br>
+Durante a modelagem relacional, sempre tivemos em mente o produto final.<br>
+Assim, buscamos garantir que todas as informações estivessem facilmente acessíveis, evitando estruturas complexas que exigissem muitos 'joins'.<br>
+Também seguimos os princípios da Terceira Forma Normal (3FN), alinhando o projeto às boas práticas abordadas na disciplina.
 
 # Códigos
 ## Main.py
