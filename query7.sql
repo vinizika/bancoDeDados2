@@ -1,6 +1,7 @@
 --listar usuarios que utilizaram a showshow mais de 3 vezes
-SELECT usuario.nome
-FROM usuario
-JOIN pedido ON usuario.id_usuario = pedido.id_usuario
-GROUP BY usuario.nome
-HAVING COUNT(DISTINCT pedido.id_pedido) > 3;
+SELECT pessoa.nome
+FROM pessoa
+JOIN compra ON pessoa.id_pessoa = compra.id_pessoa
+GROUP BY pessoa.nome
+HAVING COUNT(DISTINCT compra.id_compra) > 3;
+
