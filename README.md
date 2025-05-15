@@ -34,7 +34,7 @@ Querys em SQL utilizadas para o desenvolvimento do projeto:<br>
 06. Listar locais que ja ocorreram tipos de eventos diferentes.<br>
 07. Listar usuários que utilizaram a ShowShow (site de compras de ingresso proposta) mais de 3 vezes.<br>
 08. Listar todas as compras que incluem mais de 2 ingressos.<br>
-09. Listar quantidade de eventos por tipo.<br>
+09. Listar quantidade de eventos por tipo de setor.<br>
 10. Listar quantidade de eventos que aconteceram em São Paulo com mais de 3000 pessoas.<br>
 11. Listar usuários que nunca compraram nenhum ingresso.<br>
 12. Listar eventos que ocorreram em locais que ja sediaram mais de 5 eventos.<br>
@@ -60,8 +60,12 @@ Querys em SQL utilizadas para o desenvolvimento do projeto:<br>
 - Execute query por query e confira o resultado. Perceba que todas as queries já estão ajustadas para a lógica utilizada na inserção dos dados.
 
 # MR E MER
-![image](https://github.com/user-attachments/assets/2d1e5bea-9315-47c3-8466-f22a56da4f1d)
-![image](https://github.com/user-attachments/assets/5a48f861-9041-4a77-b8cb-0da4c2750e61)
+
+![image](https://github.com/user-attachments/assets/fbcd49c6-b5e5-4f19-a9c4-9e0d4ab527ae)
+![image](https://github.com/user-attachments/assets/fd76a729-05bb-44d6-9018-239b8ec424d3)
+
+
+
 
 
 
