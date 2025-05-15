@@ -1,6 +1,7 @@
 -- pegar todos as compras que incluem mais de 2 ingressos
-SELECT pedido.id_pedido
-FROM pedido
-JOIN ingresso ON pedido.id_pedido = ingresso.id_pedido
-GROUP BY pedido.id_pedido
-HAVING COUNT(ingresso.id_ingresso) > 2;
+SELECT compra.id_compra
+FROM compra
+JOIN compra_ingresso ON compra.id_compra = compra_ingresso.id_compra
+GROUP BY compra.id_compra
+HAVING COUNT(compra_ingresso.id_ingresso) > 2;
+
