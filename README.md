@@ -29,18 +29,13 @@ Querys em SQL utilizadas para o desenvolvimento do projeto:<br>
 01. Listar eventos e quantidade de ingressos vendidos para cada.<br>
 02. Listar eventos que possuem capacidade maior que 5000.<br>
 03. Listar usuários e forma de pagamento utilizado na sua compra.<br>
-04. Listar eventos ocorrendo na cidade de São Paulo.<br>
-05. Listar eventos que ocorreram depois do dia 6 de janeiro de 2025.<br>
-06. Listar locais que ja ocorreram tipos de eventos diferentes.<br>
-07. Listar usuários que utilizaram a ShowShow (site de compras de ingresso proposta) mais de 3 vezes.<br>
-08. Listar todas as compras que incluem mais de 2 ingressos.<br>
-09. Listar quantidade de eventos por tipo de setor.<br>
-10. Listar quantidade de eventos que aconteceram em São Paulo com mais de 3000 pessoas.<br>
-11. Listar usuários que nunca compraram nenhum ingresso.<br>
-12. Listar eventos que ocorreram em locais que ja sediaram mais de 5 eventos.<br>
-13. Listar nome dos artistas que participaram de eventos realizados em locais com capacidade superior a 5000.<br>
-14. Listar artistas que ja fizeram show mais de 2 vezes no mesmo lugar.<br>
-15. Listar eventos que tiveram mais de 3 artistas diferentes.<br>
+04. Listar eventos que ocorreram depois do dia 6 de janeiro de 2025.<br>
+05. Listar locais que ja ocorreram tipos de eventos diferentes.<br>
+06. Listar usuários que utilizaram a ShowShow (site de compras de ingresso proposta) mais de 3 vezes.<br>
+07. Listar quantidade de eventos por tipo de setor.<br>
+08. Listar usuários que nunca compraram nenhum ingresso.<br>
+09. Listar nome dos artistas que participaram de eventos realizados em locais com capacidade superior a 5000.<br>
+10. Listar artistas que ja fizeram show mais de 2 vezes no mesmo lugar.<br>
 
 # Descrição de como executar o projeto
 ## Pré-requisitos:<br>
