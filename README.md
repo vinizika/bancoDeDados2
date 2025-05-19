@@ -57,7 +57,7 @@ Querys em SQL utilizadas para o desenvolvimento do projeto:<br>
 # MR E MER
 
 ![image](https://github.com/user-attachments/assets/fbcd49c6-b5e5-4f19-a9c4-9e0d4ab527ae)
-![image](https://github.com/user-attachments/assets/fd76a729-05bb-44d6-9018-239b8ec424d3)
+![image](https://github.com/user-attachments/assets/6fa1a3c6-683d-4370-95d2-40cb6225b840)
 
 
 
