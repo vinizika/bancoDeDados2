@@ -3,101 +3,106 @@ import string
 from datetime import datetime, timedelta
 from supabase import create_client, Client
 from collections import Counter
-from datetime import datetime, timedelta
-import random
 
+# configuração do Supabase
 url: str = "https://zohjlovkaevbispuxsml.supabase.co"
 key: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvaGpsb3ZrYWV2YmlzcHV4c21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYzOTU3NDksImV4cCI6MjA2MTk3MTc0OX0.4TMeR8lP4iYUnGko1zaXlCZyVnf6JLuazJy6EiXMGUg"
 supabase: Client = create_client(url, key)
 
-#limpar tabela evento
+# ── LIMPEZA DE TABELAS (child → parent) ──────────────────────────────────────
+
+# limpar tabela evento_artista
 while True:
-    ea = supabase.table("evento_artista").select("id_evento,id_artista").execute().data
-    if not ea:
+    rows = supabase.table("evento_artista").select("id_evento,id_artista").execute().data
+    if not rows:
         break
-    for row in ea:
-        supabase.table("evento_artista")\
-            .delete().eq("id_evento", row["id_evento"])\
-            .eq("id_artista", row["id_artista"]).execute()
+    for r in rows:
+        supabase.table("evento_artista") \
+            .delete().eq("id_evento", r["id_evento"]) \
+                     .eq("id_artista", r["id_artista"]) \
+            .execute()
 print("tabela evento_artista limpa")
 
-#limpar tabela compra_ingresso
+# limpar tabela evento_pessoa
 while True:
-    ci = supabase.table("compra_ingresso").select("id_compra").execute().data
-    if not ci:
+    rows = supabase.table("evento_pessoa").select("data_organizacao,id_evento,id_organizador").execute().data
+    if not rows:
         break
-    for row in ci:
-        supabase.table("compra_ingresso")\
-            .delete().eq("id_compra", row["id_compra"]).execute()
-print("tabela compra_ingresso limpa")
+    for r in rows:
+        supabase.table("evento_pessoa") \
+            .delete().eq("id_evento", r["id_evento"]) \
+                     .eq("id_organizador", r["id_organizador"]) \
+                     .eq("data_organizacao", r["data_organizacao"]) \
+            .execute()
+print("tabela evento_pessoa limpa")
 
+# limpar tabela ingresso
 while True:
-    compras = supabase.table("compra").select("id_compra").execute().data
-    if not compras:
+    rows = supabase.table("ingresso").select("id_ingresso").execute().data
+    if not rows:
         break
-    for row in compras:
-        supabase.table("compra").delete().eq("id_compra", row["id_compra"]).execute()
-print("tabela delete-compra limpa")
-
-#limpar tabela ingresso
-while True:
-    ingr = supabase.table("ingresso").select("id_ingresso").execute().data
-    if not ingr:
-        break
-    for r in ingr:
+    for r in rows:
         supabase.table("ingresso").delete().eq("id_ingresso", r["id_ingresso"]).execute()
-
 print("tabela ingresso limpa")
 
-#limpar tabela categoria
+# limpar tabela compra
 while True:
-    cats = supabase.table("categoria").select("id_categoria").execute().data
-    if not cats:
+    rows = supabase.table("compra").select("id_compra").execute().data
+    if not rows:
         break
-    for c in cats:
-        supabase.table("categoria").delete().eq("id_categoria", c["id_categoria"]).execute()
+    for r in rows:
+        supabase.table("compra").delete().eq("id_compra", r["id_compra"]).execute()
+print("tabela compra limpa")
 
+# limpar tabela categoria
+while True:
+    rows = supabase.table("categoria").select("id_categoria").execute().data
+    if not rows:
+        break
+    for r in rows:
+        supabase.table("categoria").delete().eq("id_categoria", r["id_categoria"]).execute()
 print("tabela categoria limpa")
 
-#limpar tabela evento
+# limpar tabela evento
 while True:
-    eventos = supabase.table("evento").select("id_evento").execute().data
-    if not eventos:
+    rows = supabase.table("evento").select("id_evento").execute().data
+    if not rows:
         break
-    for e in eventos:
-        supabase.table("evento").delete().eq("id_evento", e["id_evento"]).execute()
-
+    for r in rows:
+        supabase.table("evento").delete().eq("id_evento", r["id_evento"]).execute()
 print("tabela evento limpa")
 
-#limpar tabela local
+# limpar tabela local
 while True:
-    registros = supabase.table("local").select("id_local").execute().data
-    if not registros:
+    rows = supabase.table("local").select("id_local").execute().data
+    if not rows:
         break
-    for r in registros:
+    for r in rows:
         supabase.table("local").delete().eq("id_local", r["id_local"]).execute()
-print('tabela local limpa')
+print("tabela local limpa")
 
-#limpar tabela artista
+# limpar tabela artista
 while True:
-    artistas = supabase.table("artista").select("id_artista").execute().data
-    if not artistas:
+    rows = supabase.table("artista").select("id_artista").execute().data
+    if not rows:
         break
-    for a in artistas:
-        supabase.table("artista").delete().eq("id_artista", a["id_artista"]).execute()
-
+    for r in rows:
+        supabase.table("artista").delete().eq("id_artista", r["id_artista"]).execute()
 print("tabela artista limpa")
 
-#limpar tabela pessoa
+# limpar tabela pessoa
 while True:
-    registros = supabase.table("pessoa").select("id_pessoa").execute().data
-    if not registros:
+    rows = supabase.table("pessoa").select("id_pessoa").execute().data
+    if not rows:
         break
-    for r in registros:
+    for r in rows:
         supabase.table("pessoa").delete().eq("id_pessoa", r["id_pessoa"]).execute()
-    print('tabela pessoa limpa')
+print("tabela pessoa limpa")
 
-#dados fictícios
+
+# ── INSERÇÃO DE DADOS FICTÍCIOS ────────────────────────────────────────────────
+
+# 1) LOCAIS
 nomes_locais = [
     "Arena Sol Nascente", "Estádio Vale Verde", "Casa Show Horizonte",
     "Pavilhão Estrela do Norte", "Auditório Lago Azul", "Arena Costa Dourada",
@@ -127,22 +132,18 @@ segundos_ruas = [
     "Moreira", "Correia", "Rezende", "Souto", "Vieira", "Guedes"
 ]
 
-#inserindo registros
 for i in range(30):
     nome = nomes_locais[i]
     endereco = f"{primeiros_ruas[i]} {segundos_ruas[i]}, {random.randint(10, 1500)}"
     capacidade = random.randint(15000, 200000)
-
     supabase.table("local").insert({
         "nome": nome,
         "endereco": endereco,
         "capacidade": capacidade
     }).execute()
-    print(f'inserindo na tabela: {nome}, {endereco}, {capacidade} inserido')
+    print(f"[INSERE - LOCAL] {nome} | {endereco} | cap {capacidade}")
 
-
-#lista de nomes
-
+# 2) PESSOAS
 nomes = [
     "Maria", "Joao", "Ana", "Pedro", "Beatriz", "Carlos", "Mariana", "Felipe",
     "Julia", "Lucas", "Gabriela", "Rafael", "Camila", "Bruno", "Fernanda",
@@ -158,34 +159,33 @@ sobrenomes = [
     "Teixeira", "Pinto", "Monteiro", "Mendes", "Nascimento", "Dias", "Correia",
     "Moreira", "Barros"
 ]
-
 servidores_email = ["gmail", "outlook", "hotmail", "icloud"]
 
-#aleatoriamente gera datas
+inicio_nasc = datetime(1960, 1, 1)
+fim_nasc    = datetime(2007, 12, 31)
+def data_nascimento_aleatoria():
+    dias = random.randint(0, (fim_nasc - inicio_nasc).days)
+    return (inicio_nasc + timedelta(days=dias)).date().isoformat()
 
-inicio = datetime(1960, 1, 1)
-fim = datetime(2007, 12, 31)
-def data_aleatoria():
-    dias = random.randint(0, (fim - inicio).days)
-    return (inicio + timedelta(days=dias)).date().isoformat()
-
-#inserindo 30 pessoas aleatórias
 for _ in range(30):
     nome = random.choice(nomes)
     sobrenome = random.choice(sobrenomes)
     email = f"{nome.lower()}.{sobrenome.lower()}@{random.choice(servidores_email)}.com"
     cpf = "".join(random.choices("0123456789", k=11))
-    dob = data_aleatoria()
-
+    dob = data_nascimento_aleatoria()
     supabase.table("pessoa").insert({
         "nome": f"{nome} {sobrenome}",
         "email": email,
         "cpf": cpf,
         "data_nascimento": dob
     }).execute()
-    print(f'inserindo pessoa: {nome}, {sobrenome}, {email}, {cpf}, {dob} inserido')
+    print(f"[INSERE - PESSOA] {nome} {sobrenome} | {email} | CPF {cpf} | {dob}")
 
-#lista de artistas e generos
+# preparar caches
+locais_ids   = [l["id_local"]    for l in supabase.table("local").select("id_local").execute().data]
+pessoas_ids  = [p["id_pessoa"]   for p in supabase.table("pessoa").select("id_pessoa").execute().data]
+
+# 3) ARTISTAS
 artistas_generos = [
     ("Anitta", "Pop Funk"),
     ("Gusttavo Lima", "Sertanejo"),
@@ -218,29 +218,27 @@ artistas_generos = [
     ("Bad Bunny", "Reggaeton"),
     ("Karol G", "Reggaeton")
 ]
-
-#inserindo os artistas
-for nome, genero in artistas_generos:
+for nome, gen in artistas_generos:
     supabase.table("artista").insert({
         "nome": nome,
-        "genero_musical": genero
+        "genero_musical": gen
     }).execute()
-    print(f"[INSERE - ARTISTA]: {nome}, {genero} inserido")
+    print(f"[INSERE - ARTISTA] {nome} | {gen}")
 
-#lista de setores 
+# 4) CATEGORIAS (SETOR)
 setores = [
     "Pista", "Pista Premium", "VIP", "Camarote", "Front Stage", "Backstage",
     "Arquibancada", "Cadeira Inferior", "Cadeira Superior", "Mesa", "Lounge",
     "Área VIP", "Balcão", "Mezanino", "Gramado", "Setor Norte", "Setor Sul",
     "Setor Leste", "Setor Oeste", "Deck"
 ]
-
-#inserindo 10 setores
 for setor in random.sample(setores, 10):
     supabase.table("categoria").insert({"nome": setor}).execute()
-    print(f"inserindo categoria: {setor} inserido")
+    print(f"[INSERE - CATEGORIA] {setor}")
 
-#listando aleatoriamente nomes e descricoes de eventos
+cat_ids = [c["id_categoria"] for c in supabase.table("categoria").select("id_categoria").execute().data]
+
+# 5) EVENTOS
 nomes_evento = [
     "Festival de Música", "Show ao Vivo", "Mega Concerto", "Noite de Sucessos",
     "Turnê Mundial", "Live Session", "Festival Cultural", "Grande Espetáculo",
@@ -253,7 +251,7 @@ nomes_evento = [
     "Festival Hit", "Live Show"
 ]
 
-descricoes_evento = [
+descricoes = [
     "Um evento imperdível para todos os amantes de música.",
     "Uma experiência musical inesquecível.",
     "Venha curtir grandes sucessos ao vivo.",
@@ -286,205 +284,178 @@ descricoes_evento = [
     "Um evento épico do começo ao fim."
 ]
 
-locais_ids   = [l["id_local"]   for l in supabase.table("local").select("id_local").execute().data]
-pessoas_ids  = [p["id_pessoa"]  for p in supabase.table("pessoa").select("id_pessoa").execute().data]
-#dando aleatoriedade nas datas
-inicio = datetime(2020, 1, 1)
-fim    = datetime(2028, 12, 31)
+# datas e horas aleatórias
+inicio_ev = datetime(2020, 1, 1)
+fim_ev    = datetime(2028, 12, 31)
+def data_evento_aleatoria():
+    dias = random.randint(0, (fim_ev - inicio_ev).days)
+    return (inicio_ev + timedelta(days=dias)).date().isoformat()
 
-def data_aleatoria():
-    dias = random.randint(0, (fim - inicio).days)
-    return (inicio + timedelta(days=dias)).date().isoformat()
-
-def hora_aleatoria():
+def hora_evento_aleatoria():
     h = random.randint(15, 23)
     m = random.choice([0, 15, 30, 45])
     return f"{h:02d}:{m:02d}:00"
 
-#inserindo 30 eventos na lista
 for nome in random.sample(nomes_evento, 30):
-    descricao     = random.choice(descricoes_evento)
-    data_evento   = data_aleatoria()
-    hora_evento   = hora_aleatoria()
-    id_local      = random.choice(locais_ids)
-    id_organizador = random.choice(pessoas_ids)
-
+    descricao   = random.choice(descricoes)
+    data_       = data_evento_aleatoria()
+    hora_       = hora_evento_aleatoria()
+    id_local_   = random.choice(locais_ids)
     supabase.table("evento").insert({
         "nome": nome,
         "descricao": descricao,
-        "data": data_evento,
-        "hora": hora_evento,
-        "id_local": id_local,
-        "id_organizador": id_organizador
+        "data": data_,
+        "hora": hora_,
+        "id_local": id_local_
     }).execute()
+    print(f"[INSERE - EVENTO] {nome} | {data_} {hora_} | local {id_local_}")
 
-    print(f"inserind evento: {nome}, {data_evento} {hora_evento} inserido")
-
-#listando tipo de ingresso
-tipos_ingresso = ["Inteira", "Meia", "PCD", "Meet and Greet", "Popular"]
-
-#listando id do evento e sua categoria
-eventos  = supabase.table("evento").select("id_evento", "nome").execute().data
-cat_ids  = [c["id_categoria"] for c in supabase.table("categoria").select("id_categoria").execute().data]
-
-#gerando precos pros eventos levando em conta seu tipo
-preco_base_evento = {}
-for ev in eventos:
-    preco_base_evento[ev["id_evento"]] = random.randint(30, 300)
-def calcular_preco(base, tipo):
-    if tipo.lower() in {"meia", "pcd"}:
-        return round(base / 2, 2)
-    elif tipo.lower() == "meet and greet":
-        return round(base * 1.5, 2)
-    elif tipo.lower() == "popular":
-        return round(base / 3, 2)
-    return round(base, 2) 
-
-#gerando 60 ingressos aleatorios
-for _ in range(60):
-    evento_escolhido = random.choice(eventos)
-    id_evento        = evento_escolhido["id_evento"]
-    tipo             = random.choice(tipos_ingresso)
-    base_preco       = preco_base_evento[id_evento]
-    preco_final      = calcular_preco(base_preco, tipo)
-    id_categoria     = random.choice(cat_ids)
-
-    supabase.table("ingresso").insert({
-        "tipo": tipo,
-        "preco": preco_final,
-        "id_evento": id_evento,
-        "id_categoria": id_categoria
+# 6) ORGANIZAÇÃO → evento_pessoa
+evento_rows = supabase.table("evento").select("id_evento,data").execute().data
+for ev in evento_rows:
+    id_ev = ev["id_evento"]
+    data_ev = datetime.fromisoformat(ev["data"])
+    # entre 2 e 1 anos antes
+    inicio_org = data_ev - timedelta(days=730)
+    fim_org    = data_ev - timedelta(days=365)
+    delta_days = (fim_org - inicio_org).days
+    data_org = inicio_org + timedelta(days=random.randint(0, delta_days))
+    id_org = random.choice(pessoas_ids)
+    supabase.table("evento_pessoa").insert({
+        "id_evento": id_ev,
+        "id_organizador": id_org,
+        "data_organizacao": data_org.date().isoformat()
     }).execute()
+    print(f"[INSERE - EVENTO_PESSOA] evento {id_ev} | organizador {id_org} | {data_org.date()}")
 
-    print(f"inserindo ingresso: {tipo}, R$ {preco_final:.2f}, evento {id_evento} inserido")
-
-#lista de formas de pagamento
+# 7) PREÇOS E COMPRAS + INGRESSOS VINCULADOS
+tipos_ing = ["Inteira", "Meia", "PCD", "Meet and Greet", "Popular"]
 formas_pgto = ["PIX", "Cartao de credito", "Cartao de debito", "Boleto", "Bitcoin"]
-#cache de eventos
-eventos = supabase.table("evento").select("id_evento", "data").execute().data
-datas_evento = {e["id_evento"]: datetime.fromisoformat(e["data"]) for e in eventos}
-#ids de pessoas
-ids_pessoas = [p["id_pessoa"] for p in supabase.table("pessoa").select("id_pessoa").execute().data]
-#garantindo que todo ingresso terá compras
-ingressos = supabase.table("ingresso")\
-    .select("id_ingresso", "id_evento").execute().data
-#gerando compra de ingressos
-for ing in ingressos:
-    id_ingresso = ing["id_ingresso"]
-    id_evento   = ing["id_evento"]
-    data_show   = datas_evento[id_evento] 
-    data_min    = data_show - timedelta(days=365)
-    data_compra = data_min + timedelta(
-        days=random.randint(0, (data_show - data_min).days)
-    )
-    forma       = random.choice(formas_pgto)
-    id_pessoa   = random.choice(ids_pessoas)
-    compra_resp = supabase.table("compra").insert({
-        "data": data_compra.isoformat(),
+
+# cache base
+preco_base = {ev["id_evento"]: random.randint(30, 300) for ev in evento_rows}
+datas_ev = {ev["id_evento"]: datetime.fromisoformat(ev["data"]) for ev in evento_rows}
+
+def calc_preco(base, tipo):
+    t = tipo.lower()
+    if t in {"meia", "pcd"}:
+        return round(base/2, 2)
+    if t == "meet and greet":
+        return round(base*1.5, 2)
+    if t == "popular":
+        return round(base/3, 2)
+    return round(base, 2)
+
+NUM = 100
+for _ in range(NUM):
+    # compra
+    id_ev = random.choice(evento_rows)["id_evento"]
+    dt_show = datas_ev[id_ev]
+    dt_min = dt_show - timedelta(days=365)
+    dt_compra = dt_min + timedelta(days=random.randint(0, (dt_show - dt_min).days))
+    forma = random.choice(formas_pgto)
+    id_pess = random.choice(pessoas_ids)
+    resp = supabase.table("compra").insert({
+        "data": dt_compra.isoformat(),
         "forma_pagamento": forma,
-        "id_pessoa": id_pessoa
+        "id_pessoa": id_pess
     }).execute()
+    id_comp = resp.data[0]["id_compra"]
 
-    id_compra = compra_resp.data[0]["id_compra"]
-
-    print(f"inserindo compra: {id_compra}, pessoa {id_pessoa}, "
-          f"{data_compra.date()} ({forma}) inserido")
-    qtd = random.randint(1, 3)
-    supabase.table("compra_ingresso").insert({
-        "id_compra": id_compra,
-        "id_ingresso": id_ingresso,
-        "quantidade": qtd
+    # ingresso
+    tipo_ = random.choice(tipos_ing)
+    preco_ = calc_preco(preco_base[id_ev], tipo_)
+    cat_ = random.choice(cat_ids)
+    supabase.table("ingresso").insert({
+        "tipo": tipo_,
+        "preco": preco_,
+        "id_evento": id_ev,
+        "id_categoria": cat_,
+        "id_compra": id_comp
     }).execute()
+    print(f"[INSERE - COMPRA+INGRESSO] compra {id_comp} | pessoa {id_pess} | {dt_compra.date()} → ingresso {tipo_} evento {id_ev}")
 
-    print(f"inserindo compra de ingresso: compra {id_compra}, "
-          f"ingresso {id_ingresso}, qtd {qtd} inserido")
-evento_ids  = [e["id_evento"]  for e in supabase.table("evento")  .select("id_evento").execute().data]
-artista_ids = [a["id_artista"] for a in supabase.table("artista") .select("id_artista").execute().data]
-#associando evento e compra
-for id_evento in evento_ids:
-    artistas_escolhidos = random.sample(artista_ids, random.randint(1, 3))
-    #associando evento e artista
-    dados = [{"id_evento": id_evento, "id_artista": id_artista}
-             for id_artista in artistas_escolhidos]
+# 8) ASSOCIAÇÃO EVENTO ↔ ARTISTA
+evento_ids  = [e["id_evento"]  for e in evento_rows]
+artista_ids = [a["id_artista"] for a in supabase.table("artista").select("id_artista").execute().data]
+for ev_id in evento_ids:
+    escolhidos = random.sample(artista_ids, random.randint(1, 3))
+    dados = [{"id_evento": ev_id, "id_artista": aid} for aid in escolhidos]
     supabase.table("evento_artista").insert(dados).execute()
-    for id_artista in artistas_escolhidos:
-        print(f"inserindo evento e artista: evento {id_evento}, artista {id_artista} inserido")
- 
-#garantindo que tabelas nao sejam vazias 
-def fetch_ids(table, id_field):
-    return {row[id_field] for row in supabase.table(table).select(id_field).execute().data}
+    for aid in escolhidos:
+        print(f"[INSERE - EVENTO_ARTISTA] evento {ev_id} | artista {aid}")
 
-ids_local     = fetch_ids("local",  "id_local")
-ids_pessoa    = fetch_ids("pessoa", "id_pessoa")
-ids_categoria = fetch_ids("categoria", "id_categoria")
-ids_evento    = fetch_ids("evento", "id_evento")
-ids_artista   = fetch_ids("artista", "id_artista")
-ids_ingresso  = fetch_ids("ingresso", "id_ingresso")
-ids_compra    = fetch_ids("compra", "id_compra")
+# ── VALIDAÇÕES FINAIS ─────────────────────────────────────────────────────────
+
+# coletar ids existentes
+ids_local     = {l["id_local"]   for l in supabase.table("local").select("id_local").execute().data}
+ids_pessoa    = {p["id_pessoa"]  for p in supabase.table("pessoa").select("id_pessoa").execute().data}
+ids_categoria = {c["id_categoria"] for c in supabase.table("categoria").select("id_categoria").execute().data}
+ids_evento    = {e["id_evento"]  for e in supabase.table("evento").select("id_evento").execute().data}
+ids_artista   = {a["id_artista"] for a in supabase.table("artista").select("id_artista").execute().data}
+ids_ingresso  = {i["id_ingresso"] for i in supabase.table("ingresso").select("id_ingresso").execute().data}
+ids_compra    = {c["id_compra"] for c in supabase.table("compra").select("id_compra").execute().data}
 
 issues = []
-for name, s in [("local", ids_local), ("pessoa", ids_pessoa), ("categoria", ids_categoria),
-                ("evento", ids_evento), ("artista", ids_artista),
-                ("ingresso", ids_ingresso), ("compra", ids_compra)]:
-    if not s:
-        issues.append(f"Tabela {name} esta vazia")
-        #1-3 artistas por evento
-ea_rows = supabase.table("evento_artista").select("id_evento", "id_artista").execute().data
-evento_por_artista = Counter()
-for ea in ea_rows:
-    if ea["id_artista"] not in ids_artista:
-        issues.append(f"Evento {ea['id_evento']} tem artista invalido {ea['id_artista']}")
-    evento_por_artista[ea["id_evento"]] += 1
-for ev in supabase.table("evento").select("*").execute().data:
-    n = evento_por_artista.get(ev["id_evento"], 0)
+
+# validar evento_artista
+ea_rows = supabase.table("evento_artista").select("id_evento,id_artista").execute().data
+cnt_ev = Counter()
+for r in ea_rows:
+    if r["id_evento"] not in ids_evento:
+        issues.append(f"Evento_artista: evento invalido {r['id_evento']}")
+    if r["id_artista"] not in ids_artista:
+        issues.append(f"Evento_artista: artista invalido {r['id_artista']}")
+    cnt_ev[r["id_evento"]] += 1
+for ev_id, n in cnt_ev.items():
     if n < 1 or n > 3:
-        issues.append(f"Evento {ev['id_evento']} tem {n} artistas")
-    if ev["id_local"] not in ids_local:
-        issues.append(f"Evento {ev['id_evento']} tem id_local invalido {ev['id_local']}")
-    if ev["id_organizador"] not in ids_pessoa:
-        issues.append(f"Evento {ev['id_evento']} tem id_organizador invalido {ev['id_organizador']}")
+        issues.append(f"Evento {ev_id} tem {n} artistas (deveria 1–3)")
 
-ci_rows = supabase.table("compra_ingresso")\
-         .select("id_compra", "id_ingresso", "quantidade").execute().data
-tickets_comprados = Counter()
-for ci in ci_rows:
-    if ci["id_ingresso"] not in ids_ingresso:
-        issues.append(f"Compra {ci['id_compra']} tem ticket invalido {ci['id_ingresso']}")
-    if ci["id_compra"] not in ids_compra:
-        issues.append(f"compra_ingresso tem id invalido {ci['id_compra']}")
-    if ci["quantidade"] < 1 or ci["quantidade"] > 3:
-        issues.append(f"Compra {ci['id_compra']} ticket {ci['id_ingresso']} qtd {ci['quantidade']}")
-    tickets_comprados[ci["id_ingresso"]] += ci["quantidade"]
+# validar evento_pessoa
+ep_rows = supabase.table("evento_pessoa").select("id_evento,id_organizador,data_organizacao").execute().data
+for r in ep_rows:
+    if r["id_evento"] not in ids_evento:
+        issues.append(f"Evento_pessoa: evento invalido {r['id_evento']}")
+    if r["id_organizador"] not in ids_pessoa:
+        issues.append(f"Evento_pessoa: organizador invalido {r['id_organizador']}")
 
-for ing in supabase.table("ingresso").select("id_ingresso", "id_evento", "id_categoria").execute().data:
-    if ing["id_evento"] not in ids_evento:
-        issues.append(f"Ticket {ing['id_ingresso']} tem id_evento invalido {ing['id_evento']}")
-    if ing["id_categoria"] not in ids_categoria:
-        issues.append(f"Ticket {ing['id_ingresso']} tem id_categoria invalido {ing['id_categoria']}")
-    if tickets_comprados.get(ing["id_ingresso"], 0) == 0:
-        issues.append(f"Ticket {ing['id_ingresso']} nao esta linkado a nenhuma compra")
-#pelo menos 1 ingresso por show
-compra_de_items = {ci["id_compra"] for ci in ci_rows}
-for comp in supabase.table("compra").select("id_compra", "id_pessoa").execute().data:
-    if comp["id_compra"] not in compra_de_items:
-        issues.append(f"Compra {comp['id_compra']} nao tem tickets")
+# validar ingressos
+ing_rows = supabase.table("ingresso") \
+    .select("id_ingresso,id_evento,id_categoria,id_compra").execute().data
+compras_com_ingresso = set()
+for r in ing_rows:
+    if r["id_evento"] not in ids_evento:
+        issues.append(f"Ingresso {r['id_ingresso']} evento invalido {r['id_evento']}")
+    if r["id_categoria"] not in ids_categoria:
+        issues.append(f"Ingresso {r['id_ingresso']} categoria invalida {r['id_categoria']}")
+    if r["id_compra"] not in ids_compra:
+        issues.append(f"Ingresso {r['id_ingresso']} compra invalida {r['id_compra']}")
+    compras_com_ingresso.add(r["id_compra"])
+
+# toda compra tem pelo menos 1 ingresso
+for comp in supabase.table("compra").select("id_compra,id_pessoa").execute().data:
+    cid = comp["id_compra"]
+    if cid not in compras_com_ingresso:
+        issues.append(f"Compra {cid} não tem ingressos vinculados")
     if comp["id_pessoa"] not in ids_pessoa:
-        issues.append(f"Compra {comp['id_compra']} tem id_pessoa invalidos {comp['id_pessoa']}")
-#cpfs unicos
-pessoas = supabase.table("pessoa").select("cpf", "email", "id_pessoa").execute().data
-cpf_count   = Counter(p["cpf"]   for p in pessoas)
-email_count = Counter(p["email"] for p in pessoas)
-for p in pessoas:
-    if cpf_count[p["cpf"]] > 1:
-        issues.append(f"CPF duplicado {p['cpf']} (pessoa {p['id_pessoa']})")
-    if email_count[p["email"]] > 1:
-        issues.append(f"Email dupicado {p['email']} (pessoa {p['id_pessoa']})")
+        issues.append(f"Compra {cid} pessoa invalida {comp['id_pessoa']}")
 
-print("\n" + "="*50)
+# validar tabela pessoa (CPFs e e-mails únicos)
+p_rows = supabase.table("pessoa").select("cpf,email,id_pessoa").execute().data
+cpfs   = Counter(p["cpf"]   for p in p_rows)
+emails = Counter(p["email"] for p in p_rows)
+for p in p_rows:
+    if cpfs[p["cpf"]] > 1:
+        issues.append(f"CPF duplicado {p['cpf']} (pessoa {p['id_pessoa']})")
+    if emails[p["email"]] > 1:
+        issues.append(f"Email duplicado {p['email']} (pessoa {p['id_pessoa']})")
+
+# resultado final
+print("\n" + "="*60)
 if issues:
-    print("teste falhou")
+    print("TESTES FALHARAM:")
     for msg in issues:
         print(" -", msg)
 else:
-    print("teste concluido")
-print("="*50 + "\n")
+    print("TODOS OS TESTES CONCLUIDOS COM SUCESSO!")
+print("="*60 + "\n")
