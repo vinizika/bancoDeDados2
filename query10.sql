@@ -1,4 +1,4 @@
---listar artistas que ja fizeram show mais de 2 vezes no mesmo lugar
+--listar artistas que ja fizeram show mais de 1 vez no mesmo lugar
 SELECT distinct artista.nome
 FROM artista
 JOIN evento_artista ON artista.id_artista = evento_artista.id_artista
