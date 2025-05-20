@@ -1,6 +1,7 @@
---listar eventos que a capacidade é maior que 5000
+--listar eventos que a capacidade é maior que 100000
 
-SELECT evento.nome, local.nome, local.capacidade
+SELECT distinct evento.nome, local.capacidade
 FROM evento
 JOIN local ON evento.id_local = local.id_local
-WHERE local.capacidade > 5000;
+WHERE local.capacidade > 100000
+ORDER BY local.capacidade DESC
