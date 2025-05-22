@@ -3,10 +3,11 @@ import string
 from datetime import datetime, timedelta
 from supabase import create_client, Client
 from collections import Counter
+from itertools import product
 
 # configuração do Supabase
-url: str = "https://zohjlovkaevbispuxsml.supabase.co"
-key: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvaGpsb3ZrYWV2YmlzcHV4c21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYzOTU3NDksImV4cCI6MjA2MTk3MTc0OX0.4TMeR8lP4iYUnGko1zaXlCZyVnf6JLuazJy6EiXMGUg"
+url: str = "https://xtqcwyzwxnedqphpnmbs.supabase.co"
+key: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0cWN3eXp3eG5lZHFwaHBubWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc5Mzk1MjYsImV4cCI6MjA2MzUxNTUyNn0.wsvIRPsygbZbrrmQkP9o7AUPeFeToQQgp2aQAnSssa4"
 supabase: Client = create_client(url, key)
 
 # ── LIMPEZA DE TABELAS (child → parent) ──────────────────────────────────────
@@ -129,12 +130,27 @@ segundos_ruas = [
     "Castro", "Almeida", "Ribeiro", "Cardoso", "Machado", "Marques",
     "Pereira", "Nogueira", "Dias", "Teixeira", "Sampaio", "Ferraz",
     "Magalhães", "Campos", "Vargas", "Andrade", "Batista", "Barros",
-    "Moreira", "Correia", "Rezende", "Souto", "Vieira", "Guedes"
+    "Moreira", "Correia", "Rezende", "Souto", "Vieira", "Guedes", "Neves",
+    "Tavares",
+    "Pimentel",
+    "Franco",
+    "Azevedo",
+    "Monteiro",
+    "Aguiar",
+    "Soares",
+    "Cavalcante",
+    "Menezes"
 ]
 
-for i in range(30):
+combinacoes_ruas = list(product(primeiros_ruas, segundos_ruas))
+random.shuffle(combinacoes_ruas)
+
+quantidade = min(random.randint(20, 40), len(combinacoes_ruas), len(nomes_locais))
+
+for i in range(quantidade):
     nome = nomes_locais[i]
-    endereco = f"{primeiros_ruas[i]} {segundos_ruas[i]}, {random.randint(10, 1500)}"
+    rua1, rua2 = combinacoes_ruas[i]
+    endereco = f"{rua1} {rua2}, {random.randint(10, 1500)}"
     capacidade = random.randint(15000, 200000)
     supabase.table("local").insert({
         "nome": nome,
@@ -149,7 +165,16 @@ nomes = [
     "Julia", "Lucas", "Gabriela", "Rafael", "Camila", "Bruno", "Fernanda",
     "Daniel", "Larissa", "Eduardo", "Isabelle", "Gustavo", "Bianca", "Andre",
     "Vitoria", "Rodrigo", "Tatiana", "Alexandre", "Luana", "Henrique",
-    "Leticia", "Diego"
+    "Leticia", "Diego", "Natália",
+    "Thiago",
+    "Paula",
+    "Renato",
+    "Aline",
+    "Vinícius",
+    "Débora",
+    "Igor",
+    "Simone",
+    "Leandro"
 ]
 
 sobrenomes = [
@@ -157,7 +182,16 @@ sobrenomes = [
     "Almeida", "Barbosa", "Lima", "Gomes", "Ribeiro", "Carvalho", "Fernandes",
     "Araujo", "Melo", "Castro", "Rocha", "Martins", "Freitas", "Cardoso",
     "Teixeira", "Pinto", "Monteiro", "Mendes", "Nascimento", "Dias", "Correia",
-    "Moreira", "Barros"
+    "Moreira", "Barros", "Andrade",
+    "Farias",
+    "Vieira",
+    "Ramos",
+    "Cavalcante",
+    "Peixoto",
+    "Tavares",
+    "Neves",
+    "Miranda",
+    "Aguiar"
 ]
 servidores_email = ["gmail", "outlook", "hotmail", "icloud"]
 
@@ -167,21 +201,31 @@ def data_nascimento_aleatoria():
     dias = random.randint(0, (fim_nasc - inicio_nasc).days)
     return (inicio_nasc + timedelta(days=dias)).date().isoformat()
 
-for _ in range(30):
-    nome = random.choice(nomes)
-    sobrenome = random.choice(sobrenomes)
+# conjunto para registrar pares já usados
+pares_utilizados = set()
+
+for _ in range(random.randint(20, 40)):
+    while True:
+        nome = random.choice(nomes)
+        sobrenome = random.choice(sobrenomes)
+        par = (nome, sobrenome)
+        if par not in pares_utilizados:
+            pares_utilizados.add(par)
+            break
+
     email = f"{nome.lower()}.{sobrenome.lower()}@{random.choice(servidores_email)}.com"
     cpf = "".join(random.choices("0123456789", k=11))
     dob = data_nascimento_aleatoria()
+
     supabase.table("pessoa").insert({
         "nome": f"{nome} {sobrenome}",
         "email": email,
         "cpf": cpf,
         "data_nascimento": dob
     }).execute()
+
     print(f"[INSERE - PESSOA] {nome} {sobrenome} | {email} | CPF {cpf} | {dob}")
 
-# preparar caches
 locais_ids   = [l["id_local"]    for l in supabase.table("local").select("id_local").execute().data]
 pessoas_ids  = [p["id_pessoa"]   for p in supabase.table("pessoa").select("id_pessoa").execute().data]
 
@@ -248,7 +292,16 @@ nomes_evento = [
     "Evento Experiência", "Live Experience", "Noite Inesquecível",
     "Festa Open Air", "Festival Anual", "Show de Talentos",
     "Concerto Ao Ar Livre", "Tour Internacional", "Grande Show",
-    "Festival Hit", "Live Show"
+    "Festival Hit", "Live Show", "Som da Cidade",
+    "Vibe Urbana",
+    "Show das Estrelas",
+    "Ritmos do Brasil",
+    "Noite Acústica",
+    "Festa das Tribos",
+    "Palco Livre",
+    "Festival de Estações",
+    "Turnê das Lendas",
+    "Música Sem Fronteiras"
 ]
 
 descricoes = [
@@ -281,7 +334,17 @@ descricoes = [
     "O espetáculo que você estava esperando.",
     "Um show completo para todos os públicos.",
     "Diversos estilos musicais em harmonia.",
-    "Um evento épico do começo ao fim."
+    "Um evento épico do começo ao fim.",
+    "Uma jornada sonora que vai mexer com seus sentidos.",
+    "O melhor da cena musical reunido em um só lugar.",
+    "Ritmos envolventes para uma noite vibrante.",
+    "Sinta a batida e deixe-se levar pelo som.",
+    "Uma noite repleta de talentos e emoções.",
+    "Show com produção de alto nível e grandes artistas.",
+    "Uma explosão de cultura, arte e entretenimento.",
+    "Curta cada acorde como se fosse o último.",
+    "Viva momentos mágicos ao som dos seus favoritos.",
+    "O evento musical mais aguardado do ano chegou!"
 ]
 
 # datas e horas aleatórias
@@ -296,11 +359,24 @@ def hora_evento_aleatoria():
     m = random.choice([0, 15, 30, 45])
     return f"{h:02d}:{m:02d}:00"
 
-for nome in random.sample(nomes_evento, 30):
-    descricao   = random.choice(descricoes)
-    data_       = data_evento_aleatoria()
-    hora_       = hora_evento_aleatoria()
-    id_local_   = random.choice(locais_ids)
+# cópias das listas para remoção segura
+nomes_disponiveis = nomes_evento.copy()
+descricoes_disponiveis = descricoes.copy()
+
+# garante que só gere até o número mínimo disponível entre nomes e descrições
+quantidade = min(random.randint(20, 40), len(nomes_disponiveis), len(descricoes_disponiveis))
+
+for _ in range(quantidade):
+    nome = random.choice(nomes_disponiveis)
+    nomes_disponiveis.remove(nome)
+
+    descricao = random.choice(descricoes_disponiveis)
+    descricoes_disponiveis.remove(descricao)
+
+    data_ = data_evento_aleatoria()
+    hora_ = hora_evento_aleatoria()
+    id_local_ = random.choice(locais_ids)
+
     supabase.table("evento").insert({
         "nome": nome,
         "descricao": descricao,
@@ -309,6 +385,7 @@ for nome in random.sample(nomes_evento, 30):
         "id_local": id_local_
     }).execute()
     print(f"[INSERE - EVENTO] {nome} | {data_} {hora_} | local {id_local_}")
+
 
 # 6) ORGANIZAÇÃO → evento_pessoa
 evento_rows = supabase.table("evento").select("id_evento,data").execute().data
@@ -346,7 +423,7 @@ def calc_preco(base, tipo):
         return round(base/3, 2)
     return round(base, 2)
 
-NUM = 100
+NUM = random.randint(80, 120)
 for _ in range(NUM):
     # compra
     id_ev = random.choice(evento_rows)["id_evento"]
