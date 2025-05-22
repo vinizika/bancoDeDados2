@@ -1,10 +1,9 @@
-
 -- Tabela de Pessoas
 CREATE TABLE Pessoa (
     id_pessoa SERIAL PRIMARY KEY,
     nome VARCHAR(100),
-    email VARCHAR(100) UNIQUE,
-    cpf VARCHAR(14) UNIQUE,
+    email VARCHAR(100),
+    cpf VARCHAR(14),
     data_nascimento DATE
 );
 
@@ -30,20 +29,7 @@ CREATE TABLE Evento (
     data DATE,
     hora TIME,
     id_local INT,
-    id_organizador INT,
-    FOREIGN KEY (id_local) REFERENCES Local(id_local),
-    FOREIGN KEY (id_organizador) REFERENCES Pessoa(id_pessoa)
-);
-
--- Tabela de Ingressos
-CREATE TABLE Ingresso (
-    id_ingresso SERIAL PRIMARY KEY,
-    tipo VARCHAR(50),
-    preco DECIMAL(10,2),
-    id_evento INT,
-    id_categoria INT,
-    FOREIGN KEY (id_evento) REFERENCES Evento(id_evento),
-    FOREIGN KEY (id_categoria) REFERENCES Categoria(id_categoria)
+    FOREIGN KEY (id_local) REFERENCES Local(id_local)
 );
 
 -- Tabela de Compras
@@ -55,14 +41,17 @@ CREATE TABLE Compra (
     FOREIGN KEY (id_pessoa) REFERENCES Pessoa(id_pessoa)
 );
 
--- Tabela de Compra_Ingresso (associativa N:N)
-CREATE TABLE Compra_Ingresso (
+-- Tabela de Ingressos
+CREATE TABLE Ingresso (
+    id_ingresso SERIAL PRIMARY KEY,
+    tipo VARCHAR(50),
+    preco DECIMAL(10,2),
+    id_evento INT,
+    id_categoria INT,
     id_compra INT,
-    id_ingresso INT,
-    quantidade INT,
-    PRIMARY KEY (id_compra, id_ingresso),
-    FOREIGN KEY (id_compra) REFERENCES Compra(id_compra),
-    FOREIGN KEY (id_ingresso) REFERENCES Ingresso(id_ingresso)
+    FOREIGN KEY (id_evento) REFERENCES Evento(id_evento),
+    FOREIGN KEY (id_categoria) REFERENCES Categoria(id_categoria),
+    FOREIGN KEY (id_compra) REFERENCES Compra(id_compra)
 );
 
 -- Tabela de Artistas
@@ -79,4 +68,14 @@ CREATE TABLE Evento_Artista (
     PRIMARY KEY (id_evento, id_artista),
     FOREIGN KEY (id_evento) REFERENCES Evento(id_evento),
     FOREIGN KEY (id_artista) REFERENCES Artista(id_artista)
+);
+
+-- Tabela de Evento_Pessoa (associativa N:N)
+CREATE TABLE Evento_Pessoa (
+    data_organizacao DATE,
+    id_evento INT,
+    id_organizador INT,
+    PRIMARY KEY (id_evento, id_organizador),
+    FOREIGN KEY (id_evento) REFERENCES Evento(id_evento),
+    FOREIGN KEY (id_organizador) REFERENCES Pessoa(id_pessoa)
 );
