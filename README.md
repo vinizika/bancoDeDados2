@@ -34,7 +34,7 @@ Querys em SQL utilizadas para o desenvolvimento do projeto:<br>
 06. Listar usuários que utilizaram a ShowShow mais de 3 vezes.<br>
 07. Listar quantidade de eventos por tipo de setor.<br>
 08. Listar usuários que nunca compraram nenhum ingresso. Se todos tiverem ingresso, é avisado.<br>
-09. Listar nome dos artistas que participaram de eventos realizados em locais com capacidade superior a 100000.<br>
+09. Listar os nomes dos artistas que se apresentaram em eventos realizados em locais com capacidade superior a 100.000 pessoas, informando também a maior capacidade de local em que cada artista já se apresentou.<br>
 10. Listar artistas que ja fizeram show mais de 1 vez no mesmo lugar.<br>
 
 # Descrição de como executar o projeto
